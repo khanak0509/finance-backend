@@ -5,7 +5,7 @@ from starlette.exceptions import HTTPException as StarletteHTTPException
 
 from backend.routes import auth, users, records, dashboard
 
-app = FastAPI(title="finledger-api", description="Finance API")
+app = FastAPI(title="api", description="Finance API")
 
 
 @app.get("/")
