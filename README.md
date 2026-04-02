@@ -84,12 +84,12 @@ The following accounts are generated automatically when you seed the database:
 | Analyst | `analyst@finance.dev` | analyst123 |
 | Viewer | `viewer@finance.dev` | viewer123 |
 
-## 🤔 Assumptions Made
+##  Assumptions Made
 - **Small to Medium Scale:** Operating strictly on SQLite3 implies the focus is on simplicity, local-file constraints, and fast initial iteration rather than horizontal scalability or heavy concurrent writes.
 - **Single-Tenant Structure:** All financial records are treated as belonging to a single organizational ledger (rather than individual users having their own private balances). Users access the same shared pool of data based on their role permissions.
 - **Stateless Control:** Revoked users are validated instantly because `get_current_user` makes a quick query to verify user status despite using stateless JWTs.
 
-## ⚖️ Tradeoffs Considered
+##  Tradeoffs Considered
 - **Raw SQL vs. ORM:** Opted against using ORMs (like SQLAlchemy) to maintain absolute control over the data layer and explicitly showcase database querying and logic structure, reducing abstraction magic at the cost of handwritten SQL boilerplate.
 - **Soft Deletion Mechanism:** Deleting financial records permanently was avoided for audit traceability. When an admin "deletes" a record, it marks the timestamp in `deleted_at`. As a tradeoff, every read query explicitly ignores deleted records.
 - **Database-Level Aggregation:** The dashboard routes calculate totals natively inside the database (`SUM`, `GROUP BY`) rather than fetching raw rows into Python. This is immensely faster, though it couples business reporting logic closely to SQLite syntax.
