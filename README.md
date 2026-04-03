@@ -29,13 +29,20 @@ source venv/bin/activate
 pip install -r requirements.txt
 ```
 
-### 2. Initialize Database
+### 2. Environment Variables
+Create a local `.env` file to hold your secrets:
+```bash
+cp .env.example .env
+```
+*(Ensure a `SECRET_KEY` is set inside this file!)*
+
+### 3. Initialize Database
 Creates the initial tables and inserts dummy records for testing:
 ```bash
 python -m backend.db.seed
 ```
 
-### 3. Start the Server
+### 4. Start the Server
 ```bash
 uvicorn backend.main:app --port 8000 --reload
 ```
