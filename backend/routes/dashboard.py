@@ -33,8 +33,7 @@ def dashboard(user: dict = Depends(get_current_user), db=Depends(get_db)):
     return {
         "total_income": income,
         "total_expenses": expense,
-        # expenses are stored as negative numbers, so we sum them
-        "net_balance": income + expense,
+        "net_balance": income - expense,
         "category_breakdown": {row[0] or "uncategorized": row[1] for row in categories},
         "recent_transactions": [dict(r) for r in recent],
         "monthly_trend": [{"month": r[0], "income": r[1], "expense": r[2]} for r in months]
