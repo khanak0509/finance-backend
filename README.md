@@ -9,6 +9,34 @@ A robust, lightweight, and clean FastAPI backend for financial record processing
 - **Audit Logging:** Automated tracking of all record modifications.
 - **Stateless JWT Auth:** Secure authentication using short-lived tokens.
 
+## 🏗 Architecture
+
+```mermaid
+graph TD
+    Client([Client Request]) --> API[FastAPI Entrypoint]
+    
+    subgraph Security Layer
+        API --> TokenCheck{Valid JWT?}
+        TokenCheck -- No --> Unauthorized[401 Unauthorized]
+        TokenCheck -- Yes --> RoleCheck{Has Role?}
+        RoleCheck -- No --> Forbidden[403 Forbidden]
+    end
+
+    subgraph Validation Layer
+        RoleCheck -- Yes --> SchemaCheck{Valid Payload?}
+        SchemaCheck -- No --> Unprocessable[422 Unprocessable]
+    end
+    
+    subgraph Execution Layer
+        SchemaCheck -- Yes --> Router[Route Logic]
+        Router --> DB[(SQLite SQL)]
+        Router --> Audit[(Audit Log Insert)]
+    end
+    
+    DB --> Output[Pydantic Response Schema]
+    Output --> Response([HTTP 200/201 JSON])
+```
+
 ## 🛠️ Tech Stack
 - **Framework:** FastAPI
 - **Database:** Raw SQLite3
