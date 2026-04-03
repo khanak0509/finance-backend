@@ -15,19 +15,19 @@ A robust, lightweight, and clean FastAPI backend for financial record processing
 graph TD
     Client([Client Request]) --> API[FastAPI Entrypoint]
     
-    subgraph Security Layer
+    subgraph Security_Layer [Security Layer]
         API --> TokenCheck{Valid JWT?}
         TokenCheck -- No --> Unauthorized[401 Unauthorized]
         TokenCheck -- Yes --> RoleCheck{Has Role?}
         RoleCheck -- No --> Forbidden[403 Forbidden]
     end
 
-    subgraph Validation Layer
+    subgraph Validation_Layer [Validation Layer]
         RoleCheck -- Yes --> SchemaCheck{Valid Payload?}
         SchemaCheck -- No --> Unprocessable[422 Unprocessable]
     end
     
-    subgraph Execution Layer
+    subgraph Execution_Layer [Execution Layer]
         SchemaCheck -- Yes --> Router[Route Logic]
         Router --> DB[(SQLite SQL)]
         Router --> Audit[(Audit Log Insert)]
