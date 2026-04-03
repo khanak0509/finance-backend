@@ -3,3 +3,6 @@ __pycache__/
 venv/
 finance.db
 .DS_Store
+finance.db
+.DS_Store
+.python-version
