@@ -11,31 +11,7 @@ A robust, lightweight, and clean FastAPI backend for financial record processing
 
 ## 🏗 Architecture
 
-```mermaid
-graph TD
-    Client([Client Request]) --> API[FastAPI Entrypoint]
-    
-    subgraph Security_Layer [Security Layer]
-        API --> TokenCheck{Valid JWT?}
-        TokenCheck -- No --> Unauthorized[401 Unauthorized]
-        TokenCheck -- Yes --> RoleCheck{Has Role?}
-        RoleCheck -- No --> Forbidden[403 Forbidden]
-    end
-
-    subgraph Validation_Layer [Validation Layer]
-        RoleCheck -- Yes --> SchemaCheck{Valid Payload?}
-        SchemaCheck -- No --> Unprocessable[422 Unprocessable]
-    end
-    
-    subgraph Execution_Layer [Execution Layer]
-        SchemaCheck -- Yes --> Router[Route Logic]
-        Router --> DB[(SQLite SQL)]
-        Router --> Audit[(Audit Log Insert)]
-    end
-    
-    DB --> Output[Pydantic Response Schema]
-    Output --> Response([HTTP 200/201 JSON])
-```
+![Architecture Ecosystem](assets/architecture.png)
 
 ## 🛠️ Tech Stack
 - **Framework:** FastAPI
