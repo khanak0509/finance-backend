@@ -68,14 +68,22 @@ def get_records(
     # apply pagination & ordering
     query += " ORDER BY date DESC LIMIT ? OFFSET ?"
     params.extend([limit, (page - 1) * limit])
-    return [dict(r) for r in db.execute(query, params).fetchall()]
+    
+    # print("debug query:", query)
+    
+    results = db.execute(query, params).fetchall()
+    
+    data_list = []
+    for r in results:
+        data_list.append(dict(r))
+        
+    return data_list
 
 @router.patch("/{id}", response_model=RecordResponse, dependencies=[require_role("admin", "analyst")])
 def update_record(id: int, payload: RecordUpdate, user: dict = Depends(get_current_user), db=Depends(get_db)):
     # partial update — only touches fields that were sent
     _get_record(db, id)
     
-    # build update query from only the fields that were actually provided
     updates, params = [], []
     for key, value in payload.dict(exclude_unset=True).items():
         updates.append(f"{key} = ?")
@@ -100,7 +108,7 @@ def delete_record(id: int, user: dict = Depends(get_current_user), db=Depends(ge
     # admin only
     _get_record(db, id)
     
-    # soft delete, keep row for audit trail
+    # soft delete
     db.execute(
         "UPDATE records SET deleted_at = ? WHERE id = ?",
         (datetime.utcnow().isoformat(), id)

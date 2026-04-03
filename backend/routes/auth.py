@@ -31,5 +31,6 @@ def login(user: UserLogin, db=Depends(get_db)):
     if db_user["is_active"] != 1:
         raise HTTPException(status_code=403, detail="Account is disabled")
         
+    # generate token for the user
     token = create_access_token({"sub": str(db_user["id"]), "role": db_user["role"]})
     return {"access_token": token, "token_type": "bearer"}

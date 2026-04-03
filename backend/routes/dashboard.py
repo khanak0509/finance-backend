@@ -8,16 +8,20 @@ router = APIRouter(prefix="/api/dashboard", tags=["dashboard"])
 def dashboard(user: dict = Depends(get_current_user), db=Depends(get_db)):
     income = db.execute("SELECT COALESCE(SUM(amount), 0) FROM records WHERE type='income' AND deleted_at IS NULL").fetchone()[0]
     expense = db.execute("SELECT COALESCE(SUM(amount), 0) FROM records WHERE type='expense' AND deleted_at IS NULL").fetchone()[0]
-    
-    categories = db.execute(
+
+    # print("income and expense:", income, expense)
+
+    cat_data = db.execute(
         "SELECT category, SUM(amount) FROM records WHERE deleted_at IS NULL GROUP BY category"
     ).fetchall()
     
-    recent = db.execute(
+    recent_tx = db.execute(
         "SELECT * FROM records WHERE deleted_at IS NULL ORDER BY date DESC, id DESC LIMIT 5"
     ).fetchall()
     
-    months = db.execute(
+    # print(recent_tx)
+    
+    monthly_data = db.execute(
         """
         SELECT 
             strftime('%Y-%m', date) as month,
@@ -30,11 +34,30 @@ def dashboard(user: dict = Depends(get_current_user), db=Depends(get_db)):
         """
     ).fetchall()
 
+    cat_dict = {}
+    for row in cat_data:
+        k = row[0]
+        if not k:
+            k = "uncategorized"
+        cat_dict[k] = row[1]
+
+    recent_list = []
+    for r in recent_tx:
+        recent_list.append(dict(r))
+
+    trend_list = []
+    for m in monthly_data:
+        trend_list.append({
+            "month": m[0],
+            "income": m[1],
+            "expense": m[2]
+        })
+
     return {
         "total_income": income,
         "total_expenses": expense,
         "net_balance": income - expense,
-        "category_breakdown": {row[0] or "uncategorized": row[1] for row in categories},
-        "recent_transactions": [dict(r) for r in recent],
-        "monthly_trend": [{"month": r[0], "income": r[1], "expense": r[2]} for r in months]
+        "category_breakdown": cat_dict,
+        "recent_transactions": recent_list,
+        "monthly_trend": trend_list
     }
