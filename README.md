@@ -80,11 +80,7 @@ The API provides clear boundaries for different operations based on roles. All p
 pytest tests/
 ```
 
-**Run the end-to-end API test script (via cURL):**
-```bash
-chmod +x test_api.sh
-./test_api.sh
-```
+
 
 ## 🔑 Sandbox Credentials
 The following accounts are generated automatically when you seed the database:
