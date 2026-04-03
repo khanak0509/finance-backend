@@ -60,7 +60,6 @@ def get_records(
         query += " AND date <= ?"
         params.append(to_date)
         
-    # wildcard search across notes and category
     if search:
         query += " AND (notes LIKE ? OR category LIKE ?)"
         params.extend([f"%{search}%", f"%{search}%"])
@@ -81,7 +80,6 @@ def get_records(
 
 @router.patch("/{id}", response_model=RecordResponse, dependencies=[require_role("admin", "analyst")])
 def update_record(id: int, payload: RecordUpdate, user: dict = Depends(get_current_user), db=Depends(get_db)):
-    # partial update — only touches fields that were sent
     _get_record(db, id)
     
     updates, params = [], []
